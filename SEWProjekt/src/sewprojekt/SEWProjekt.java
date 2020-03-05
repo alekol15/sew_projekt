@@ -5,6 +5,8 @@
  */
 package sewprojekt;
 
+
+
 /**
  *
  * @author alekol15
@@ -16,6 +18,9 @@ public class SEWProjekt {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        NewJFrame db=new NewJFrame();
+        db.setVisible(true);
+        
     }
     
 }

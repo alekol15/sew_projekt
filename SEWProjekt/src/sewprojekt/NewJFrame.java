@@ -1,3 +1,12 @@
+package sewprojekt;
+
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,11 +19,15 @@
  */
 public class NewJFrame extends javax.swing.JFrame {
 
-    /**
-     * Creates new form NewJFrame
-     */
+   Connection con=null; 
+   PreparedStatement ps  = null;
     public NewJFrame() {
         initComponents();
+        try {
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException ex) {
+                System.out.println("Fehler beim Laden des Treibers");
+            }
     }
 
     /**
@@ -25,9 +38,7 @@ public class NewJFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
         jLabel1 = new javax.swing.JLabel();
         txt_server = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -42,6 +53,17 @@ public class NewJFrame extends javax.swing.JFrame {
         button_update = new javax.swing.JButton();
         button_delete = new javax.swing.JButton();
         psw_field = new javax.swing.JPasswordField();
+        txt_id = new javax.swing.JLabel();
+        txt_name = new javax.swing.JLabel();
+        txt_jahr = new javax.swing.JLabel();
+        txt_regie = new javax.swing.JLabel();
+        text_id = new javax.swing.JTextField();
+        text_name = new javax.swing.JTextField();
+        text_jahr = new javax.swing.JTextField();
+        text_regie = new javax.swing.JTextField();
+        button_disconnect = new javax.swing.JButton();
+        button_next = new javax.swing.JButton();
+        button_prev = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,18 +83,22 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jLabel5.setText("Password:");
 
+        button_connect.setBackground(new java.awt.Color(0, 255, 0));
         button_connect.setText("Connect");
+        button_connect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_connectActionPerformed(evt);
+            }
+        });
 
         button_add.setText("Add");
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, buttonGroup1, org.jdesktop.beansbinding.ObjectProperty.create(), button_add, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
+        button_add.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_addActionPerformed(evt);
+            }
+        });
 
         button_update.setText("Update");
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, buttonGroup1, org.jdesktop.beansbinding.ObjectProperty.create(), button_update, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
-
         button_update.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_updateActionPerformed(evt);
@@ -80,14 +106,63 @@ public class NewJFrame extends javax.swing.JFrame {
         });
 
         button_delete.setText("Delete");
+        button_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_deleteActionPerformed(evt);
+            }
+        });
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, buttonGroup1, org.jdesktop.beansbinding.ObjectProperty.create(), button_delete, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
+        txt_id.setText("ID");
+
+        txt_name.setText("Name");
+
+        txt_jahr.setText("Jahr");
+
+        txt_regie.setText("Regie");
+
+        text_id.setEditable(false);
+
+        button_disconnect.setBackground(new java.awt.Color(255, 0, 0));
+        button_disconnect.setText("Disconnect");
+        button_disconnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button_disconnectActionPerformed(evt);
+            }
+        });
+
+        button_next.setText("Next");
+
+        button_prev.setText("Previous");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(102, 102, 102)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txt_name)
+                    .addComponent(txt_id)
+                    .addComponent(txt_regie)
+                    .addComponent(txt_jahr))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(text_name, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(text_id, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(text_jahr, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(42, 42, 42)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(button_delete)
+                            .addComponent(button_update)
+                            .addComponent(button_add))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(button_next, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(button_prev, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGap(18, 18, 18))
+                    .addComponent(text_regie, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -96,28 +171,24 @@ public class NewJFrame extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txt_server, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                        .addComponent(txt_port))
-                    .addComponent(txt_db, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt_username, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
-                    .addComponent(psw_field))
-                .addGap(55, 55, 55)
-                .addComponent(button_connect)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(txt_db, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txt_username, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+                            .addComponent(psw_field))
+                        .addGap(43, 43, 43)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(button_connect)
+                            .addComponent(button_disconnect)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(txt_server, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+                        .addComponent(txt_port, javax.swing.GroupLayout.Alignment.LEADING)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(button_add)
-                    .addComponent(button_delete)
-                    .addComponent(button_update))
-                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -152,17 +223,47 @@ public class NewJFrame extends javax.swing.JFrame {
                             .addComponent(txt_port, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(63, 63, 63)
-                        .addComponent(button_connect)))
-                .addGap(24, 24, 24)
-                .addComponent(button_add)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(button_update)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(button_delete)
-                .addContainerGap(49, Short.MAX_VALUE))
+                        .addComponent(button_connect)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(button_disconnect)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(text_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_id))
+                        .addGap(14, 14, 14)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(text_name, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_name))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(text_jahr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_jahr))
+                        .addContainerGap(49, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(button_delete)
+                                .addGap(4, 4, 4)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(text_regie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_regie))
+                                .addContainerGap())
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(button_add)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(button_update))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(14, 14, 14)
+                                        .addComponent(button_next)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(button_prev)))
+                                .addGap(55, 55, 55))))))
         );
-
-        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -174,6 +275,71 @@ public class NewJFrame extends javax.swing.JFrame {
     private void button_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_updateActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_button_updateActionPerformed
+
+    private void button_connectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_connectActionPerformed
+        // TODO add your handling code here:
+         
+        
+        String db=txt_db.getText();
+        String server=txt_server.getText();
+        String user=txt_username.getText();
+        String psw=psw_field.getText();
+        String portnr=txt_port.getText();
+        String url = "jdbc:mysql://" + server + "/" + db;
+        
+        try {
+             con = DriverManager.getConnection(url, user, psw);
+        } catch (SQLException ex) {
+                    ex.printStackTrace();
+                    System.out.println("Fehler beim Erstellen der Verbindung");
+        }
+        txt_db.disable();
+        txt_server.disable();
+        txt_username.disable();
+        psw_field.disable();
+        txt_port.disable();
+    }//GEN-LAST:event_button_connectActionPerformed
+        
+    
+    
+    
+    
+    private void button_disconnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_disconnectActionPerformed
+        // TODO add your handling code here:
+        try {
+            con.close();
+            } catch (SQLException ex) {
+                System.out.println("Fehler beim Schliessen der Verbindung");
+            }
+        
+        txt_db.enable();
+        txt_server.enable();
+        txt_username.enable();
+        psw_field.enable();
+        txt_port.enable();
+    }//GEN-LAST:event_button_disconnectActionPerformed
+
+    private void button_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_addActionPerformed
+        // TODO add your handling code here:
+        try{
+                String add =  "INSERT INTO film" + "(name, jahr, regie)"+" VALUES (?,?,?)";
+                ps = con.prepareStatement(add);
+                ps.setString(1, text_name.getText());
+                ps.setString(2, text_jahr.getText());
+                ps.setString(3, text_regie.getText());
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Es wurde hingefügt");
+            }
+            catch(Exception ex){
+                JOptionPane.showMessageDialog(null, ex);
+            }
+        System.out.println("hallo");
+    }//GEN-LAST:event_button_addActionPerformed
+
+    private void button_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_deleteActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_button_deleteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -211,10 +377,12 @@ public class NewJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton button_add;
     private javax.swing.JButton button_connect;
     private javax.swing.JButton button_delete;
+    private javax.swing.JButton button_disconnect;
+    private javax.swing.JButton button_next;
+    private javax.swing.JButton button_prev;
     private javax.swing.JButton button_update;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -222,10 +390,17 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPasswordField psw_field;
+    private javax.swing.JTextField text_id;
+    private javax.swing.JTextField text_jahr;
+    private javax.swing.JTextField text_name;
+    private javax.swing.JTextField text_regie;
     private javax.swing.JTextField txt_db;
+    private javax.swing.JLabel txt_id;
+    private javax.swing.JLabel txt_jahr;
+    private javax.swing.JLabel txt_name;
     private javax.swing.JTextField txt_port;
+    private javax.swing.JLabel txt_regie;
     private javax.swing.JTextField txt_server;
     private javax.swing.JTextField txt_username;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 }
